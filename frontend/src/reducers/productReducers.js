@@ -1,6 +1,10 @@
 import { PRODUCT_LIST_FAIL, PRODUCT_LIST_SUCCESS, PRODUCT_LIST_REQUEST } from '../constants/productConstants';
 
-export const productListReducer = (state = { products: [] }, action) => {
+const initialState = {
+  products: [],
+};
+
+export const productListReducer = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
     case PRODUCT_LIST_REQUEST:
