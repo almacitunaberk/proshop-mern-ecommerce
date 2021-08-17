@@ -22,7 +22,7 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @route   POST /api/users/profile
+// @route   POST /api/users/
 // @desc    Register a new user
 // @acess   Public
 const registerUser = asyncHandler(async (req, res) => {
@@ -81,7 +81,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
-
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
