@@ -15,6 +15,9 @@ import {
   PRODUCT_UPDATE_REQUEST,
   PRODUCT_UPDATE_SUCCESS,
   PRODUCT_UPDATE_FAIL,
+  PRODUCT_REVIEW_REQUEST,
+  PRODUCT_REVIEW_SUCCESS,
+  PRODUCT_REVIEW_FAIL,
 } from '../constants/productConstants';
 
 // GET All Products
@@ -108,7 +111,7 @@ export const createProduct = () => async (dispatch, getState) => {
   }
 };
 
-// UPDATE a Product By Its Id
+// UPDATE a Product
 export const updateProduct = (product) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_UPDATE_REQUEST });
@@ -133,6 +136,35 @@ export const updateProduct = (product) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: PRODUCT_UPDATE_FAIL,
+      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+    });
+  }
+};
+
+// REVIEW on a Product
+export const reviewOnProduct = (productId, review) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_REVIEW_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    await axios.post(`/api/products/${productId}/reviews`, review, config);
+
+    dispatch({
+      type: PRODUCT_REVIEW_SUCCESS,
+    });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_REVIEW_FAIL,
       payload: error.response && error.response.data.message ? error.response.data.message : error.message,
     });
   }
