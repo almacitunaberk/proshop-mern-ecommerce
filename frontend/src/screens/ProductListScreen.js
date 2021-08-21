@@ -4,7 +4,8 @@ import { Table, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { getListProducts, deleteProduct } from '../actions/productActions';
+import { getListProducts, deleteProduct, createProduct } from '../actions/productActions';
+import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
 
 const ProductListScreen = ({ history, match }) => {
   const dispatch = useDispatch();
@@ -15,16 +16,28 @@ const ProductListScreen = ({ history, match }) => {
   const productDelete = useSelector((state) => state.productDelete);
   const { loading: loadingProductDelete, error: errorProductDelete, success: successProductDelete } = productDelete;
 
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingProductCreate,
+    product: createdProduct,
+    success: successProductCreate,
+    error: errorProductCreate,
+  } = productCreate;
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(getListProducts());
-    } else {
+    dispatch({ type: PRODUCT_CREATE_RESET });
+    if (!userInfo.isAdmin) {
       history.push('/login');
     }
-  }, [dispatch, userInfo, history, successProductDelete]);
+    if (successProductCreate) {
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+    } else {
+      dispatch(getListProducts());
+    }
+  }, [dispatch, userInfo, history, successProductDelete, successProductCreate, createdProduct]);
 
   const handleDeleteProduct = (productId) => {
     if (window.confirm('Are you sure?')) {
@@ -32,7 +45,9 @@ const ProductListScreen = ({ history, match }) => {
     }
   };
 
-  const handleCreateProduct = () => {};
+  const handleCreateProduct = () => {
+    dispatch(createProduct());
+  };
 
   return (
     <>
@@ -48,6 +63,8 @@ const ProductListScreen = ({ history, match }) => {
       </Row>
       {loadingProductDelete && <Loader />}
       {errorProductDelete && <Message variant="danger">{errorProductDelete}</Message>}
+      {loadingProductCreate && <Loader />}
+      {errorProductCreate && <Message variant="danger">{errorProductCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
