@@ -25,14 +25,13 @@ const ProductEditScreen = ({ match, history }) => {
   const { loading: loadingProductDetails, error: errorProductDetails, product } = productDetails;
 
   const productUpdate = useSelector((state) => state.productUpdate);
-  const {
-    loading: loadingProductUpdate,
-    success: successProductUpdate,
-    error: errorProductUpdate,
-    product: updatedProduct,
-  } = productUpdate;
+  const { loading: loadingProductUpdate, success: successProductUpdate, error: errorProductUpdate } = productUpdate;
 
   useEffect(() => {
+    if (successProductUpdate) {
+      dispatch({ type: PRODUCT_UPDATE_RESET });
+      history.push('/admin/productlist');
+    }
     if (!product.name || product._id !== productId) {
       dispatch(getProductDetails(productId));
     } else {
@@ -44,7 +43,7 @@ const ProductEditScreen = ({ match, history }) => {
       setImage(product.image);
       setCountInStock(product.countInStock);
     }
-  }, [dispatch, productId, history]);
+  }, [dispatch, product, productId, history, successProductUpdate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -105,7 +104,7 @@ const ProductEditScreen = ({ match, history }) => {
               ></Form.Control>
             </Form.Group>
             <Form.Group controlId="image">
-              <Form.Label>Price</Form.Label>
+              <Form.Label>Image</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Upload the image url"
