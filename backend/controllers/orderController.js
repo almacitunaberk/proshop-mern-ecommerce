@@ -23,7 +23,6 @@ const addOrderItems = asyncHandler(async (req, res) => {
     });
 
     const createdOrder = await order.save();
-    console.log(createdOrder);
     res.status(201).json(createdOrder);
   }
 });
@@ -72,4 +71,12 @@ const getMyOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
-export { addOrderItems, getOrderById, updateOrderPaid, getMyOrders };
+// @route   GET /api/orderslist
+// @desc    Get all orders
+// @acess   Private/admin
+const getAllOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({}).populate('user', 'id name');
+  res.json(orders);
+});
+
+export { addOrderItems, getOrderById, updateOrderPaid, getMyOrders, getAllOrders };

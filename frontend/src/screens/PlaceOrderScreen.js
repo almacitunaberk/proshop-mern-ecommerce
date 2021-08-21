@@ -5,26 +5,23 @@ import { Link } from 'react-router-dom';
 import CheckoutSteps from '../components/CheckoutSteps';
 import Message from '../components/Message';
 import { createOrder } from '../actions/orderActions';
+import { USER_DETAILS_RESET } from '../constants/userConstants';
+import { ORDER_CREATE_RESET } from '../constants/orderConstants';
 
 const PlaceOrderScreen = ({ history }) => {
+  const dispatch = useDispatch();
+
   const cart = useSelector((state) => state.cart);
+
+  if (!cart.shippingAddress.address) {
+    history.push('/shipping');
+  } else if (!cart.paymentMethod) {
+    history.push('/payment');
+  }
 
   const addDecimals = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
   };
-
-  const dispatch = useDispatch();
-
-  const orderCreate = useSelector((state) => state.orderCreate);
-
-  const { loading, success, error } = orderCreate;
-
-  useEffect(() => {
-    if (success) {
-      // history.push(`/order/${order._id}`);
-      console.log('success');
-    }
-  }, [history, success]);
 
   // CALCULATE PRICES
   cart.itemsPrice = Number(cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)).toFixed(2);
@@ -32,9 +29,19 @@ const PlaceOrderScreen = ({ history }) => {
   cart.taxPrice = Number(cart.itemsPrice * 0.15).toFixed(2);
   cart.totalPrice = Number(Number(cart.itemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice)).toFixed(2);
 
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, loading, success, error } = orderCreate;
+
+  useEffect(() => {
+    if (success) {
+      history.push(`/order/${order._id}`);
+      dispatch({ type: USER_DETAILS_RESET });
+      dispatch({ type: ORDER_CREATE_RESET });
+    }
+  }, [history, success]);
+
   const handlePlaceOrder = (e) => {
     e.preventDefault();
-    console.log(cart);
     dispatch(
       createOrder({
         orderItems: cart.cartItems,
@@ -46,7 +53,6 @@ const PlaceOrderScreen = ({ history }) => {
         totalPrice: cart.totalPrice,
       })
     );
-    console.log('Order created');
   };
 
   return (
