@@ -21,23 +21,25 @@ import {
 } from '../constants/productConstants';
 
 // GET All Products
-export const getListProducts = () => async (dispatch) => {
-  try {
-    dispatch({
-      type: PRODUCT_LIST_REQUEST,
-    });
-    const res = await axios.get('/api/products');
-    dispatch({
-      type: PRODUCT_LIST_SUCCESS,
-      payload: res.data,
-    });
-  } catch (error) {
-    dispatch({
-      type: PRODUCT_LIST_FAIL,
-      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
-    });
-  }
-};
+export const getListProducts =
+  (keyword = '') =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: PRODUCT_LIST_REQUEST,
+      });
+      const res = await axios.get(`/api/products?keyword=${keyword}`);
+      dispatch({
+        type: PRODUCT_LIST_SUCCESS,
+        payload: res.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: PRODUCT_LIST_FAIL,
+        payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+      });
+    }
+  };
 
 // GET a Specific Product by ID
 export const getProductDetails = (id) => async (dispatch) => {
