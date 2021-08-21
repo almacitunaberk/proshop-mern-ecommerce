@@ -102,6 +102,19 @@ const getAllUsers = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
+// @route   GET /api/users/:id
+// @desc    Get a user by its id
+// @acess   Private/Admin
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 // @route   DELETE /api/users/:id
 // @desc    Delete a user by its id
 // @acess   Private/Admin
@@ -110,19 +123,6 @@ const deleteUser = asyncHandler(async (req, res) => {
   if (user) {
     await user.remove();
     res.json({ message: 'User removed' });
-  } else {
-    res.status(404);
-    throw new Error('User not found');
-  }
-});
-
-// @route   GET /api/users/:id
-// @desc    Get a user by its id
-// @acess   Private/Admin
-const getUserById = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (user) {
-    res.json(user);
   } else {
     res.status(404);
     throw new Error('User not found');

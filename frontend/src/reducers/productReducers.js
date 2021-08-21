@@ -5,13 +5,12 @@ import {
   PRODUCT_DETAILS_FAIL,
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_DETAILS_REQUEST,
+  PRODUCT_DELETE_REQUEST,
+  PRODUCT_DELETE_SUCCESS,
+  PRODUCT_DELETE_FAIL,
 } from '../constants/productConstants';
 
-const initialListState = {
-  products: [],
-};
-
-export const productListReducer = (state = initialListState, action) => {
+export const productListReducer = (state = { products: [] }, action) => {
   const { type, payload } = action;
   switch (type) {
     case PRODUCT_LIST_REQUEST:
@@ -36,13 +35,7 @@ export const productListReducer = (state = initialListState, action) => {
   }
 };
 
-const initialDetailsState = {
-  product: {
-    reviews: [],
-  },
-};
-
-export const productDetailsReducer = (state = initialDetailsState, action) => {
+export const productDetailsReducer = (state = { product: { reviews: [] } }, action) => {
   const { type, payload } = action;
 
   switch (type) {
@@ -61,6 +54,20 @@ export const productDetailsReducer = (state = initialDetailsState, action) => {
         loading: false,
         error: payload,
       };
+    default:
+      return state;
+  }
+};
+
+export const productDeleteReducer = (state = {}, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case PRODUCT_DELETE_REQUEST:
+      return { loading: true };
+    case PRODUCT_DELETE_SUCCESS:
+      return { loading: false, success: true };
+    case PRODUCT_DELETE_FAIL:
+      return { loading: false, error: payload };
     default:
       return state;
   }
