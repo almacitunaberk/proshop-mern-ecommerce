@@ -5,7 +5,7 @@ import Product from '../models/productModel.js';
 // @desc    Get the all products in the backend
 // @acess   Public
 const getProducts = asyncHandler(async (req, res) => {
-  const pageSize = 10;
+  const pageSize = 2;
   const page = Number(req.query.pageNumber) || 1;
 
   const keyword = req.query.keyword
@@ -127,4 +127,21 @@ const reviewOnProduct = asyncHandler(async (req, res) => {
     throw new Error('Product not found');
   }
 });
-export { getProductById, getProducts, deleteProductById, createProduct, updateProductById, reviewOnProduct };
+
+// @route   GET /api/products/top
+// @desc    Get the top rated products
+// @acess   Public
+const getTopProducts = asyncHandler(async (req, res) => {
+  const topProducts = await Product.find({}).sort({ rating: -1 }).limit(3);
+  res.json(topProducts);
+});
+
+export {
+  getProductById,
+  getProducts,
+  deleteProductById,
+  createProduct,
+  updateProductById,
+  reviewOnProduct,
+  getTopProducts,
+};
