@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 import { getListProducts } from '../actions/productActions';
@@ -7,6 +8,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
+import Meta from '../components/Meta';
 
 const HomeScreen = ({ match }) => {
   const dispatch = useDispatch();
@@ -24,7 +26,19 @@ const HomeScreen = ({ match }) => {
 
   return (
     <>
-      {!keyword && <ProductCarousel />}
+      <Meta
+        title="Welcome to Proshop"
+        description="We sell the best products for cheap"
+        keywords="Electronics, buy electronics, cheap"
+      />
+
+      {!keyword ? (
+        <ProductCarousel />
+      ) : (
+        <Link to="/" className="btn btn-light">
+          Home
+        </Link>
+      )}
       <h1>Latest Products</h1>
       {loading ? (
         <Loader />
